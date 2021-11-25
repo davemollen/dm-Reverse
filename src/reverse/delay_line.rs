@@ -36,8 +36,8 @@ impl DelayLine {
     let floored_read_pointer = read_pointer.floor();
     let mix = read_pointer - floored_read_pointer;
     let mut index = floored_read_pointer as usize;
-    if index != self.write_pointer {
-      index += 1;
+    if index == self.write_pointer {
+      index -= 1;
     }
 
     match interp {
