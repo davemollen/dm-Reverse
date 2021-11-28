@@ -1,7 +1,24 @@
 ## dm-Reverse
 
 A reverse delay effect written in Rust.
-The effect can be compiled to a [vst](./vst) or [lv2](./lv2) plugin.
+
+## Table of contents:
+
+- [Install instructions](#Install-instructions)
+- [License](#License)
+
+## Install instructions
+
+Windows:
+
+1. Run `cargo build --release`
+2. Copy libdm_reverse.dll in /target/release to your vst plugin folder
+
+Mac
+
+1. Run `cargo build --release`
+2. Run `./osx_vst_bundler.sh dm-Reverse target/release/libdm_reverse.dylib`
+3. Copy dm-Reverse.vst in the root of this folder to your vst plugin folder
 
 ## License
 

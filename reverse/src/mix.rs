@@ -16,13 +16,17 @@ impl Mix {
 mod tests {
   use super::*;
 
+  fn approx_equal(a: f32, b: f32, decimal_places: u8) {
+    let factor = 10.0f32.powi(decimal_places as i32);
+    let a = (a * factor).trunc();
+    let b = (b * factor).trunc();
+    assert_eq!(a, b);
+  }
+
   #[test]
   fn mix() {
-    let first = Mix::run(0., 1., 0.) * 1000.;
-    let second = Mix::run(0., 1., 0.5) * 1000.;
-    let third = Mix::run(0., 1., 1.) * 1000.;
-    assert_eq!(first.floor() / 1000., 0.);
-    assert_eq!(second.floor() / 1000., 0.707);
-    assert_eq!(third.floor() / 1000., 1.);
+    approx_equal(Mix::run(0., 1., 0.), 0., 3);
+    approx_equal(Mix::run(0., 1., 0.5), 0.707, 3);
+    approx_equal(Mix::run(0., 1., 1.), 1., 3);
   }
 }
