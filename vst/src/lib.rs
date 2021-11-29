@@ -61,7 +61,7 @@ impl Plugin for DmReverse {
             inputs: 1,
             outputs: 1,
             parameters: 3,
-            unique_id: 1357, // Used by hosts to differentiate between plugins.
+            unique_id: 1357,
             ..Default::default()
         }
     }
@@ -122,4 +122,4 @@ impl PluginParameters for ReverseParameters {
     }
 }
 
-plugin_main!(DmReverse); // Important!
+plugin_main!(DmReverse);

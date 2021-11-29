@@ -8,7 +8,7 @@
 
     a lv2:Plugin ;
 
-    lv2:binary <libreverse.so> ;
+    lv2:binary <libdm_reverse.so> ;
 
     rdfs:seeAlso <dm-Reverse_dsp.ttl> .
 
