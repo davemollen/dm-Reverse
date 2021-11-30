@@ -86,7 +86,7 @@ impl Plugin for DmReverse {
 impl PluginParameters for ReverseParameters {
     fn get_parameter(&self, index: i32) -> f32 {
         match index {
-            0 => self.time.get(),
+            0 => ((self.time.get() - 20.) / 4980.).powf(0.333333),
             1 => self.feedback.get(),
             2 => self.mix.get(),
             _ => 0.0,
