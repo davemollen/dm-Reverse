@@ -3,11 +3,13 @@ extern crate vst;
 
 use reverse::Reverse;
 use std::sync::Arc;
-use vst::api::TimeInfo;
-use vst::buffer::AudioBuffer;
-use vst::host::Host;
-use vst::plugin::{HostCallback, Info, Plugin, PluginParameters};
-use vst::util::AtomicFloat;
+use vst::{
+    api::TimeInfo,
+    buffer::AudioBuffer,
+    host::Host,
+    plugin::{HostCallback, Info, Plugin, PluginParameters},
+    util::AtomicFloat,
+};
 
 struct DmReverse {
     params: Arc<ReverseParameters>,
