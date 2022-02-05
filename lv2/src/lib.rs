@@ -1,6 +1,6 @@
 extern crate lv2;
+extern crate reverse;
 use lv2::prelude::*;
-mod reverse;
 use reverse::Reverse;
 
 #[derive(PortCollection)]
