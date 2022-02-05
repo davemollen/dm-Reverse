@@ -2,6 +2,7 @@
 
 A reverse delay effect written in Rust.
 The effect can be compiled to a [vst](./vst) or [lv2](./lv2) plugin.
+This plugin is mono for now.
 
 ## License
 
