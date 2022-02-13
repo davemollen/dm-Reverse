@@ -19,6 +19,14 @@ impl Reverse {
     }
   }
 
+  fn read_delay_line(&mut self, phasor: f32, time: f32, gain: f32) -> f32 {
+    if gain == 0. {
+      0.
+    } else {
+      self.delay_line.read(phasor * time, "linear") * gain
+    }
+  }
+
   fn reverse_delay(&mut self, time: f32) -> f32 {
     let freq = 1000. / time;
     let phasor_a = self.phasor.run(freq) * 2.;
@@ -31,8 +39,8 @@ impl Reverse {
     let xfade_a = ramp_up * ramp_down;
     let xfade_b = 1. - xfade_a;
 
-    let reverse_delay_a = self.delay_line.read(phasor_a * time, "linear") * xfade_a;
-    let reverse_delay_b = self.delay_line.read(phasor_b * time, "linear") * xfade_b;
+    let reverse_delay_a = self.read_delay_line(phasor_a, time, xfade_a);
+    let reverse_delay_b = self.read_delay_line(phasor_b, time, xfade_b);
     reverse_delay_a + reverse_delay_b
   }
 
