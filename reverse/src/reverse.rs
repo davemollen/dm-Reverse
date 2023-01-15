@@ -11,7 +11,7 @@ pub struct Reverse {
 }
 
 impl Reverse {
-  pub fn new(sample_rate: f64) -> Self {
+  pub fn new(sample_rate: f32) -> Self {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
