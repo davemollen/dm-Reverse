@@ -1,13 +1,13 @@
-use super::clip::Clip;
-use super::delay_line::DelayLine;
-use super::lowpass::Lowpass;
-use super::mix::Mix;
-use super::phasor::Phasor;
+use crate::delay_line::{DelayLine, Interpolation};
+use crate::mix::Mix;
+use crate::one_pole_filter::Mode;
+use crate::one_pole_filter::OnePoleFilter;
+use crate::phasor::Phasor;
 
 pub struct Reverse {
   delay_line: DelayLine,
   phasor: Phasor,
-  lowpass: Lowpass,
+  lowpass: OnePoleFilter,
 }
 
 impl Reverse {
@@ -15,7 +15,7 @@ impl Reverse {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
-      lowpass: Lowpass::new(sample_rate),
+      lowpass: OnePoleFilter::new(sample_rate),
     }
   }
 
@@ -23,7 +23,7 @@ impl Reverse {
     if gain == 0. {
       0.
     } else {
-      self.delay_line.read(phasor * time, "linear") * gain
+      self.delay_line.read(phasor * time, Interpolation::Linear) * gain
     }
   }
 
@@ -34,8 +34,8 @@ impl Reverse {
 
     let xfade_factor = time / 20.;
     let xfade_offset = 1. / xfade_factor + 1.;
-    let ramp_up = Clip::run(phasor_a * xfade_factor, 0., 1.);
-    let ramp_down = Clip::run((xfade_offset - phasor_a) * xfade_factor, 0., 1.);
+    let ramp_up = (phasor_a * xfade_factor).min(1.);
+    let ramp_down = ((xfade_offset - phasor_a) * xfade_factor).clamp(0., 1.);
     let xfade_a = ramp_up * ramp_down;
     let xfade_b = 1. - xfade_a;
 
@@ -44,10 +44,10 @@ impl Reverse {
     reverse_delay_a + reverse_delay_b
   }
 
-  pub fn run(&mut self, input: f32, t: f32, feedback: f32, mix: f32) -> f32 {
-    let time = self.lowpass.run(t, 1.);
+  pub fn run(&mut self, input: f32, time: f32, feedback: f32, mix: f32) -> f32 {
+    let time = self.lowpass.run(time, 3., Mode::Hertz);
     let reverse_delay = self.reverse_delay(time);
-    let delay = self.delay_line.read(time, "linear");
+    let delay = self.delay_line.read(time, Interpolation::Linear);
     self.delay_line.write(input + delay * feedback);
     Mix::run(input, reverse_delay, mix)
   }

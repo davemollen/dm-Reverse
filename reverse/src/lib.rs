@@ -1,7 +1,6 @@
-mod clip;
 mod delay_line;
-mod lowpass;
 mod mix;
+mod one_pole_filter;
 mod phasor;
 mod reverse;
 
