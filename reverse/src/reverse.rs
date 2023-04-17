@@ -7,7 +7,9 @@ use crate::phasor::Phasor;
 pub struct Reverse {
   delay_line: DelayLine,
   phasor: Phasor,
-  lowpass: OnePoleFilter,
+  smooth_time: OnePoleFilter,
+  smooth_feedback: OnePoleFilter,
+  smooth_mix: OnePoleFilter,
 }
 
 impl Reverse {
@@ -15,7 +17,9 @@ impl Reverse {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
-      lowpass: OnePoleFilter::new(sample_rate),
+      smooth_time: OnePoleFilter::new(sample_rate),
+      smooth_feedback: OnePoleFilter::new(sample_rate),
+      smooth_mix: OnePoleFilter::new(sample_rate),
     }
   }
 
@@ -45,7 +49,10 @@ impl Reverse {
   }
 
   pub fn run(&mut self, input: f32, time: f32, feedback: f32, mix: f32) -> f32 {
-    let time = self.lowpass.run(time, 3., Mode::Hertz);
+    let time = self.smooth_time.run(time, 3., Mode::Hertz);
+    let feedback = self.smooth_feedback.run(feedback, 12., Mode::Hertz);
+    let mix = self.smooth_mix.run(mix, 12., Mode::Hertz);
+
     let reverse_delay = self.reverse_delay(time);
     let delay = self.delay_line.read(time, Interpolation::Linear);
     self.delay_line.write(input + delay * feedback);
