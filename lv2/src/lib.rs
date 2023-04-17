@@ -34,7 +34,7 @@ impl Plugin for DmReverse {
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
-  fn run(&mut self, ports: &mut Ports, _features: &mut ()) {
+  fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
     let mix = *ports.mix * 0.01;
