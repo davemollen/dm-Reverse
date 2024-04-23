@@ -8,6 +8,12 @@ impl Phasor {
     Self { sample_rate, x: 0. }
   }
 
+  pub fn process(&mut self, freq: f32) -> f32 {
+    let multiplier = 1. / self.sample_rate as f32;
+    self.x = self.wrap(self.x + freq * multiplier);
+    self.x
+  }
+
   fn wrap(&mut self, input: f32) -> f32 {
     if input >= 1. {
       input - 1.
@@ -16,12 +22,6 @@ impl Phasor {
     } else {
       input
     }
-  }
-
-  pub fn run(&mut self, freq: f32) -> f32 {
-    let multiplier = 1. / self.sample_rate as f32;
-    self.x = self.wrap(self.x + freq * multiplier);
-    self.x
   }
 }
 
@@ -47,7 +47,7 @@ mod phasor {
     let mut phasor = Phasor::new(10.);
 
     for i in 1..32 {
-      approx_equal(phasor.run(1.), (i % 10) as f32 * 0.1, 1);
+      approx_equal(phasor.process(1.), (i % 10) as f32 * 0.1, 1);
     }
   }
 }

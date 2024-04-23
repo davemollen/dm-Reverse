@@ -40,7 +40,7 @@ impl Plugin for DmReverse {
     let mix = *ports.mix * 0.01;
 
     for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-      *out_frame = self.reverse.run(*in_frame, time, feedback, mix);
+      *out_frame = self.reverse.process(*in_frame, time, feedback, mix);
     }
   }
 }
