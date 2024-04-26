@@ -1,9 +1,11 @@
 mod delay_line;
+mod float_ext;
 mod mix;
 mod one_pole_filter;
 mod phasor;
 use {
   delay_line::{DelayLine, Interpolation},
+  float_ext::FloatExt,
   mix::Mix,
   one_pole_filter::Mode,
   one_pole_filter::OnePoleFilter,
