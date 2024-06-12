@@ -12,6 +12,7 @@ use vst::{
 struct DmReverse {
   params: Arc<ReverseParameters>,
   reverse: Reverse,
+  is_active: bool,
 }
 
 impl Default for DmReverse {
@@ -19,6 +20,7 @@ impl Default for DmReverse {
     Self {
       params: Arc::new(ReverseParameters::default()),
       reverse: Reverse::new(44100.),
+      is_active: false,
     }
   }
 }
@@ -47,6 +49,11 @@ impl Plugin for DmReverse {
     let time = self.params.time.get();
     let feedback = self.params.feedback.get();
     let mix = self.params.mix.get();
+
+    if !self.is_active {
+      self.reverse.initialize_params(time, feedback, mix);
+      self.is_active = true;
+    }
 
     for (input_buffer, output_buffer) in buffer.zip() {
       for (input_sample, output_sample) in input_buffer.iter().zip(output_buffer) {

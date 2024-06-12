@@ -1,5 +1,6 @@
-use crate::float_ext::FloatExt;
 use std::f32::consts::FRAC_PI_2;
+
+use crate::shared::float_ext::FloatExt;
 
 pub struct Mix;
 

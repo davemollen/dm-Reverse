@@ -15,6 +15,7 @@ struct Ports {
 #[uri("https://github.com/davemollen/dm-Reverse")]
 struct DmReverse {
   reverse: Reverse,
+  is_active: bool,
 }
 
 impl Plugin for DmReverse {
@@ -29,6 +30,7 @@ impl Plugin for DmReverse {
   fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
     Some(Self {
       reverse: Reverse::new(_plugin_info.sample_rate() as f32),
+      is_active: false,
     })
   }
 
@@ -38,6 +40,11 @@ impl Plugin for DmReverse {
     let time = *ports.time;
     let feedback = *ports.feedback * 0.01;
     let mix = *ports.mix * 0.01;
+
+    if !self.is_active {
+      self.reverse.initialize_params(time, feedback, mix);
+      self.is_active = true;
+    }
 
     for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
       *out_frame = self.reverse.process(*in_frame, time, feedback, mix);
