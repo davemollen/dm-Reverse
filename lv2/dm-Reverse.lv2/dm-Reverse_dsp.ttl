@@ -6,8 +6,7 @@
 @prefix epp: <http://lv2plug.in/ns/ext/port-props#> .
 
 <https://github.com/davemollen/dm-Reverse>
-	a lv2:Plugin ,
-		lv2:DelayPlugin ;
+	a lv2:Plugin , lv2:DelayPlugin, mod:DelayPlugin ;
 	lv2:project <http://lv2plug.in/ns/lv2> ;
 	doap:name "dm-Reverse" ;
 	doap:license "GPLv3" ;
@@ -18,7 +17,7 @@
 		lv2:symbol "time" ;
 		lv2:name "Time" ;
 		lv2:portProperty epp:logarithmic ;
-		lv2:default 250.0 ;
+		lv2:default 1000.0 ;
 		lv2:minimum 20.0 ;
 		lv2:maximum 5000.0 ;
 		units:unit units:ms

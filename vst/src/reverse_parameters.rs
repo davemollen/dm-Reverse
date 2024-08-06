@@ -9,7 +9,7 @@ pub struct ReverseParameters {
 impl Default for ReverseParameters {
   fn default() -> Self {
     Self {
-      time: AtomicFloat::new(250.),
+      time: AtomicFloat::new(1000.),
       feedback: AtomicFloat::new(0.5),
       mix: AtomicFloat::new(0.5),
     }

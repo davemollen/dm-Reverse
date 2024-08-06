@@ -1,4 +1,5 @@
 mod delay_line;
+mod log_smooth;
 mod shared {
   pub mod float_ext;
 }
@@ -7,6 +8,7 @@ mod param_filter;
 mod phasor;
 use {
   delay_line::{DelayLine, Interpolation},
+  log_smooth::LogSmooth,
   mix::Mix,
   param_filter::ParamFilter,
   phasor::Phasor,
@@ -15,7 +17,7 @@ use {
 pub struct Reverse {
   delay_line: DelayLine,
   phasor: Phasor,
-  smooth_time: ParamFilter,
+  smooth_time: LogSmooth,
   smooth_feedback: ParamFilter,
   smooth_mix: ParamFilter,
 }
@@ -25,7 +27,7 @@ impl Reverse {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
-      smooth_time: ParamFilter::new(sample_rate, 3.),
+      smooth_time: LogSmooth::new(sample_rate, 0.25),
       smooth_feedback: ParamFilter::new(sample_rate, 12.),
       smooth_mix: ParamFilter::new(sample_rate, 12.),
     }
