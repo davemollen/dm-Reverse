@@ -6,10 +6,11 @@
 @prefix epp: <http://lv2plug.in/ns/ext/port-props#> .
 
 <https://github.com/davemollen/dm-Reverse>
-	a lv2:Plugin , lv2:DelayPlugin, mod:DelayPlugin ;
+	a lv2:Plugin , lv2:DelayPlugin ;
 	lv2:project <http://lv2plug.in/ns/lv2> ;
 	doap:name "dm-Reverse" ;
 	doap:license "GPLv3" ;
+	lv2:requiredFeature lv2:inPlaceBroken ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:port [
 		a lv2:InputPort, lv2:ControlPort ;

@@ -1,24 +1,8 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
-
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-
-
 <https://github.com/davemollen/dm-Reverse>
-
     a lv2:Plugin ;
-
     lv2:binary <libdm_reverse.so> ;
-
-    rdfs:seeAlso <dm-Reverse_dsp.ttl> .
-
-
-
-
-
-
-<https://github.com/davemollen/dm-Reverse> <http://moddevices.com/ns/mod#releaseNumber> 0 .
-<https://github.com/davemollen/dm-Reverse> <http://moddevices.com/ns/mod#builderVersion> 1 .
-<https://github.com/davemollen/dm-Reverse> <http://moddevices.com/ns/mod#buildId> 310 .
-<https://github.com/davemollen/dm-Reverse> <http://moddevices.com/ns/mod#buildEnvironment> "rustgen" .
+    rdfs:seeAlso <dm-Reverse.ttl> .
 <https://github.com/davemollen/dm-Reverse> rdfs:seeAlso <modgui.ttl> .
