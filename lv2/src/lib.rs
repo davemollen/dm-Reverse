@@ -1,7 +1,7 @@
 extern crate lv2;
 extern crate reverse;
 use lv2::prelude::*;
-use reverse::Reverse;
+use reverse::{Params, Reverse};
 
 #[derive(PortCollection)]
 struct Ports {
@@ -15,7 +15,7 @@ struct Ports {
 #[uri("https://github.com/davemollen/dm-Reverse")]
 struct DmReverse {
   reverse: Reverse,
-  is_active: bool,
+  params: Params,
 }
 
 impl Plugin for DmReverse {
@@ -27,27 +27,24 @@ impl Plugin for DmReverse {
   type AudioFeatures = ();
 
   // Create a new instance of the plugin; Trivial in this case.
-  fn new(_plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
+  fn new(plugin_info: &PluginInfo, _features: &mut ()) -> Option<Self> {
+    let sample_rate = plugin_info.sample_rate() as f32;
+
     Some(Self {
-      reverse: Reverse::new(_plugin_info.sample_rate() as f32),
-      is_active: false,
+      reverse: Reverse::new(sample_rate),
+      params: Params::new(sample_rate),
     })
   }
 
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
   fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
-    let time = *ports.time;
-    let feedback = *ports.feedback * 0.01;
-    let mix = *ports.mix * 0.01;
-
-    if !self.is_active {
-      self.reverse.initialize_params(time, feedback, mix);
-      self.is_active = true;
-    }
+    self
+      .params
+      .set(*ports.time, *ports.feedback * 0.01, *ports.mix * 0.01);
 
     for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-      *out_frame = self.reverse.process(*in_frame, time, feedback, mix);
+      *out_frame = self.reverse.process(*in_frame, &mut self.params);
     }
   }
 }

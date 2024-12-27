@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate vst;
 mod reverse_parameters;
-use reverse::Reverse;
+use reverse::{Params as ProcessParams, Reverse};
 use reverse_parameters::ReverseParameters;
 use std::sync::Arc;
 use vst::{
@@ -12,7 +12,7 @@ use vst::{
 struct DmReverse {
   params: Arc<ReverseParameters>,
   reverse: Reverse,
-  is_active: bool,
+  process_params: ProcessParams,
 }
 
 impl Default for DmReverse {
@@ -20,7 +20,7 @@ impl Default for DmReverse {
     Self {
       params: Arc::new(ReverseParameters::default()),
       reverse: Reverse::new(44100.),
-      is_active: false,
+      process_params: ProcessParams::new(44100.),
     }
   }
 }
@@ -28,6 +28,7 @@ impl Default for DmReverse {
 impl Plugin for DmReverse {
   fn set_sample_rate(&mut self, sample_rate: f32) {
     self.reverse = Reverse::new(sample_rate);
+    self.process_params = ProcessParams::new(sample_rate);
   }
 
   fn get_info(&self) -> Info {
@@ -46,18 +47,17 @@ impl Plugin for DmReverse {
   }
 
   fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-    let time = self.params.time.get();
-    let feedback = self.params.feedback.get();
-    let mix = self.params.mix.get();
-
-    if !self.is_active {
-      self.reverse.initialize_params(time, feedback, mix);
-      self.is_active = true;
-    }
+    self.process_params.set(
+      self.params.time.get(),
+      self.params.feedback.get(),
+      self.params.mix.get(),
+    );
 
     for (input_buffer, output_buffer) in buffer.zip() {
       for (input_sample, output_sample) in input_buffer.iter().zip(output_buffer) {
-        *output_sample = self.reverse.process(*input_sample, time, feedback, mix);
+        *output_sample = self
+          .reverse
+          .process(*input_sample, &mut self.process_params);
       }
     }
   }

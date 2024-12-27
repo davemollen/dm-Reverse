@@ -1,25 +1,21 @@
 mod delay_line;
-mod log_smooth;
 mod shared {
   pub mod float_ext;
 }
 mod mix;
-mod param_filter;
+mod params;
 mod phasor;
+pub use params::Params;
 use {
   delay_line::{DelayLine, Interpolation},
-  log_smooth::LogSmooth,
   mix::Mix,
-  param_filter::ParamFilter,
+  params::Smoother,
   phasor::Phasor,
 };
 
 pub struct Reverse {
   delay_line: DelayLine,
   phasor: Phasor,
-  smooth_time: LogSmooth,
-  smooth_feedback: ParamFilter,
-  smooth_mix: ParamFilter,
 }
 
 impl Reverse {
@@ -27,22 +23,13 @@ impl Reverse {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
-      smooth_time: LogSmooth::new(sample_rate, 0.25),
-      smooth_feedback: ParamFilter::new(sample_rate, 12.),
-      smooth_mix: ParamFilter::new(sample_rate, 12.),
     }
   }
 
-  pub fn initialize_params(&mut self, time: f32, feedback: f32, mix: f32) {
-    self.smooth_time.initialize(time);
-    self.smooth_feedback.initialize(feedback);
-    self.smooth_mix.initialize(mix);
-  }
-
-  pub fn process(&mut self, input: f32, time: f32, feedback: f32, mix: f32) -> f32 {
-    let time = self.smooth_time.process(time);
-    let feedback = self.smooth_feedback.process(feedback);
-    let mix = self.smooth_mix.process(mix);
+  pub fn process(&mut self, input: f32, params: &mut Params) -> f32 {
+    let time = params.time.next();
+    let feedback = params.feedback.next();
+    let mix = params.mix.next();
 
     let reverse_delay = self.reverse_delay(time);
     let delay = self.delay_line.read(time, Interpolation::Linear);
