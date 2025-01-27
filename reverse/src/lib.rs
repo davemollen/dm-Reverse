@@ -38,7 +38,7 @@ impl Reverse {
     Mix::process(input, reverse_delay, mix)
   }
 
-  fn read_delay_line(&mut self, phasor: f32, time: f32, gain: f32) -> f32 {
+  fn read_delay_line(&self, phasor: f32, time: f32, gain: f32) -> f32 {
     if gain == 0. {
       0.
     } else {
