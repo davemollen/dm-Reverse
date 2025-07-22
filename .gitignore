@@ -1,2 +1,6 @@
 target
 .DS_Store
+*.svg
+*libdm_reverse.so
+*libdm_reverse.dylib
+*libdm_reverse.dll
