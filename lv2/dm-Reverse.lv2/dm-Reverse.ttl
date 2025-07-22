@@ -16,7 +16,6 @@
 		foaf:name "Dave Mollen" ;
 		foaf:homepage <https://github.com/davemollen/dm-Reverse> ;
 	] ;
-	lv2:requiredFeature lv2:inPlaceBroken ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	mod:brand "DM" ;
 	mod:label "Reverse" ;

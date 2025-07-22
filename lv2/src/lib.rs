@@ -5,11 +5,11 @@ use reverse::{Params, Reverse};
 
 #[derive(PortCollection)]
 struct Ports {
-  time: InputPort<Control>,
-  feedback: InputPort<Control>,
-  mix: InputPort<Control>,
-  input: InputPort<Audio>,
-  output: OutputPort<Audio>,
+  time: InputPort<InPlaceControl>,
+  feedback: InputPort<InPlaceControl>,
+  mix: InputPort<InPlaceControl>,
+  input: InputPort<InPlaceAudio>,
+  output: OutputPort<InPlaceAudio>,
 }
 
 #[uri("https://github.com/davemollen/dm-Reverse")]
@@ -39,12 +39,15 @@ impl Plugin for DmReverse {
   // Process a chunk of audio. The audio ports are dereferenced to slices, which the plugin
   // iterates over.
   fn run(&mut self, ports: &mut Ports, _features: &mut (), _sample_count: u32) {
-    self
-      .params
-      .set(*ports.time, *ports.feedback * 0.01, *ports.mix * 0.01);
+    self.params.set(
+      ports.time.get(),
+      ports.feedback.get() * 0.01,
+      ports.mix.get() * 0.01,
+    );
 
-    for (in_frame, out_frame) in Iterator::zip(ports.input.iter(), ports.output.iter_mut()) {
-      *out_frame = self.reverse.process(*in_frame, &mut self.params);
+    for (input, output) in ports.input.iter().zip(ports.output.iter()) {
+      let reverse_output = self.reverse.process(input.get(), &mut self.params);
+      output.set(reverse_output);
     }
   }
 }
