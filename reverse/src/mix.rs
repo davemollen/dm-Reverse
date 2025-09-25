@@ -1,30 +1,50 @@
+use crate::shared::float_ext::FloatExt;
 use std::f32::consts::FRAC_PI_2;
 
-use crate::shared::float_ext::FloatExt;
-
-pub struct Mix;
+pub struct Mix {
+  mix: f32,
+  dry_gain: f32,
+  wet_gain: f32,
+}
 
 impl Mix {
-  pub fn process(dry: f32, wet: f32, mix: f32) -> f32 {
-    let dry_gain = (mix * FRAC_PI_2).fast_cos();
-    let wet_gain = (mix * FRAC_PI_2).fast_sin();
-    let dry_out = dry * dry_gain;
-    dry_out * dry_gain + wet * wet_gain
+  pub fn new() -> Self {
+    Self {
+      mix: 0.,
+      dry_gain: 1.,
+      wet_gain: 0.,
+    }
+  }
+
+  pub fn process(&mut self, dry: f32, wet: f32, mix: f32) -> f32 {
+    if mix != self.mix {
+      let factor = mix * FRAC_PI_2;
+      self.mix = mix;
+      self.dry_gain = factor.fast_cos();
+      self.wet_gain = factor.fast_sin();
+    }
+    dry * self.dry_gain + wet * self.wet_gain
   }
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::mix::Mix;
+  use super::Mix;
 
-  fn assert_approximately_eq(left: f32, right: f32) {
-    assert_eq!((left * 100.).round() / 100., (right * 100.).round() / 100.)
+  fn assert_approximately_eq(left: f32, right: f32, digits: usize) {
+    let tol = 10f32.powi(-(digits as i32));
+    let diff = (left - right).abs();
+    assert!(
+      diff <= tol,
+      "Values are not approximately equal: left={left}, right={right}, diff={diff}, tol={tol}"
+    );
   }
 
   #[test]
   fn mix() {
-    assert_approximately_eq(Mix::process(0., 1., 0.), 0.);
-    assert_approximately_eq(Mix::process(0., 1., 0.5), 0.707);
-    assert_approximately_eq(Mix::process(0., 1., 1.), 1.);
+    let mut mix = Mix::new();
+    assert_approximately_eq(mix.process(0., 1., 0.), 0., 3);
+    assert_approximately_eq(mix.process(0., 1., 0.5), 0.707, 3);
+    assert_approximately_eq(mix.process(0., 1., 1.), 1., 3);
   }
 }

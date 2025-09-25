@@ -16,6 +16,7 @@ use {
 pub struct Reverse {
   delay_line: DelayLine,
   phasor: Phasor,
+  mix: Mix,
 }
 
 impl Reverse {
@@ -23,6 +24,7 @@ impl Reverse {
     Self {
       delay_line: DelayLine::new((sample_rate * 5.02) as usize, sample_rate),
       phasor: Phasor::new(sample_rate),
+      mix: Mix::new(),
     }
   }
 
@@ -35,7 +37,7 @@ impl Reverse {
     let delay = self.delay_line.read(time, Interpolation::Linear);
     self.delay_line.write(input + delay * feedback);
 
-    Mix::process(input, reverse_delay, mix)
+    self.mix.process(input, reverse_delay, mix)
   }
 
   fn read_delay_line(&self, phasor: f32, time: f32, gain: f32) -> f32 {
