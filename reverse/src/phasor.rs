@@ -8,6 +8,10 @@ impl Phasor {
     Self { sample_rate, x: 0. }
   }
 
+  pub fn reset(&mut self) {
+    self.x = 0.;
+  }
+
   pub fn process(&mut self, freq: f32) -> f32 {
     let multiplier = 1. / self.sample_rate as f32;
     self.x = self.wrap(self.x + freq * multiplier);
@@ -27,19 +31,13 @@ impl Phasor {
 
 #[cfg(test)]
 mod phasor {
-  use super::*;
-
-  fn approx_equal(a: f32, b: f32, decimal_places: u8) {
-    let factor = 10.0f32.powi(decimal_places as i32);
-    let a = (a * factor).trunc();
-    let b = (b * factor).trunc();
-    assert_eq!(a, b);
-  }
+  use super::Phasor;
+  use crate::assert_approximately_eq;
 
   #[test]
   fn wrap_test() {
     let mut phasor = Phasor::new(10.);
-    approx_equal(phasor.wrap(1.2), 0.2, 3);
+    assert_approximately_eq!(phasor.wrap(1.2), 0.2, 3);
   }
 
   #[test]
@@ -47,7 +45,7 @@ mod phasor {
     let mut phasor = Phasor::new(10.);
 
     for i in 1..32 {
-      approx_equal(phasor.process(1.), (i % 10) as f32 * 0.1, 1);
+      assert_approximately_eq!(phasor.process(1.), (i % 10) as f32 * 0.1, 1);
     }
   }
 }

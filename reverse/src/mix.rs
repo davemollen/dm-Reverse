@@ -30,21 +30,13 @@ impl Mix {
 #[cfg(test)]
 mod tests {
   use super::Mix;
-
-  fn assert_approximately_eq(left: f32, right: f32, digits: usize) {
-    let tol = 10f32.powi(-(digits as i32));
-    let diff = (left - right).abs();
-    assert!(
-      diff <= tol,
-      "Values are not approximately equal: left={left}, right={right}, diff={diff}, tol={tol}"
-    );
-  }
+  use crate::assert_approximately_eq;
 
   #[test]
   fn mix() {
     let mut mix = Mix::new();
-    assert_approximately_eq(mix.process(0., 1., 0.), 0., 3);
-    assert_approximately_eq(mix.process(0., 1., 0.5), 0.707, 3);
-    assert_approximately_eq(mix.process(0., 1., 1.), 1., 3);
+    assert_approximately_eq!(mix.process(0., 1., 0.), 0., 3);
+    assert_approximately_eq!(mix.process(0., 1., 0.5), 0.707, 3);
+    assert_approximately_eq!(mix.process(0., 1., 1.), 1., 3);
   }
 }

@@ -19,6 +19,10 @@ impl Params {
     }
   }
 
+  pub fn reset(&mut self) {
+    self.is_initialized = false;
+  }
+
   pub fn set(&mut self, time: f32, feedback: f32, mix: f32) {
     if self.is_initialized {
       self.time.set_target(time);

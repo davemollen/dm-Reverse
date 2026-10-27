@@ -1,6 +1,7 @@
 mod delay_line;
 mod shared {
   pub mod float_ext;
+  pub mod macros;
 }
 mod mix;
 mod params;
@@ -26,6 +27,11 @@ impl Reverse {
       phasor: Phasor::new(sample_rate),
       mix: Mix::new(),
     }
+  }
+
+  pub fn reset(&mut self) {
+    self.delay_line.reset();
+    self.phasor.reset();
   }
 
   pub fn process(&mut self, input: f32, params: &mut Params) -> f32 {
