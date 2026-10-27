@@ -1,11 +1,23 @@
 use std::f32::consts::FRAC_PI_2;
 
 pub trait FloatExt {
+  fn mix(self, right: Self, factor: Self) -> Self;
+  fn cubic_spline_curve(self) -> Self;
   fn fast_sin(self) -> Self;
   fn fast_cos(self) -> Self;
 }
 
 impl FloatExt for f32 {
+  #[inline(always)]
+  fn mix(self, right: Self, factor: Self) -> Self {
+    self + (right - self) * factor
+  }
+
+  #[inline(always)]
+  fn cubic_spline_curve(self) -> Self {
+    self * self * (3.0 - 2.0 * self)
+  }
+
   /// This is a sine approximation. Use this to safe processing power.
   fn fast_sin(self) -> Self {
     const TWOPI: f32 = 6.2831853071795865;

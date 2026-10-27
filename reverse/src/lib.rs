@@ -1,3 +1,4 @@
+mod bypass;
 mod delay_line;
 mod shared {
   pub mod float_ext;
@@ -6,7 +7,7 @@ mod shared {
 mod mix;
 mod params;
 mod phasor;
-pub use params::Params;
+pub use {bypass::Bypass, params::Params};
 use {
   delay_line::{DelayLine, Interpolation},
   mix::Mix,

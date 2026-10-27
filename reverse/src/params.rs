@@ -1,6 +1,6 @@
 mod smooth;
-pub use smooth::Smoother;
-use smooth::{LinearSmooth, LogarithmicSmooth};
+use smooth::LogarithmicSmooth;
+pub use smooth::{LinearSmooth, Smoother};
 
 pub struct Params {
   pub time: LogarithmicSmooth,
