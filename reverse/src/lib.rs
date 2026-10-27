@@ -7,13 +7,14 @@ mod shared {
 mod mix;
 mod params;
 mod phasor;
-pub use {bypass::Bypass, params::Params};
 use {
+  crate::shared::float_ext::FloatExt,
   delay_line::{DelayLine, Interpolation},
   mix::Mix,
   params::Smoother,
   phasor::Phasor,
 };
+pub use {bypass::Bypass, params::Params};
 
 pub struct Reverse {
   delay_line: DelayLine,
@@ -64,7 +65,7 @@ impl Reverse {
     let xfade_offset = xfade_factor.recip() + 1.;
     let ramp_up = (phasor_a * xfade_factor).min(1.);
     let ramp_down = ((xfade_offset - phasor_a) * xfade_factor).clamp(0., 1.);
-    let xfade_a = ramp_up * ramp_down;
+    let xfade_a = (ramp_up * ramp_down).cubic_spline_curve();
     let xfade_b = 1. - xfade_a;
 
     let reverse_delay_a = self.read_delay_line(phasor_a, time, xfade_a);
